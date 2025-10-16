@@ -8,10 +8,10 @@ const TransactionComponent = () => {
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <td>Name</td>
-                        <td>Status</td>
-                        <td>Date</td>
-                        <td>Amount</td>
+                        <td scope="col">Name</td>
+                        <td scope="col">Status</td>
+                        <td scope="col">Date</td>
+                        <td scope="col">Amount</td>
                     </tr>
                 </thead>
                 <tbody>
