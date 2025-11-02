@@ -9,7 +9,7 @@ const UsersPage = () => {
         <div className={styles.container}>
             <div className={styles.top}>
                 <SearchComponent placeholder="Search for a user..." />
-                <Link href="/dashboard/users/add">
+                <Link href="/dashboard/users/addNew">
                     <button className={styles.addButton}> Add New </button>
                 </Link>
             </div>
@@ -44,7 +44,7 @@ const UsersPage = () => {
                         <td>
                             <div className={styles.buttons}>
 
-                            <Link href="/"> 
+                            <Link href="/dashboard/users/test"> 
                                 <button className={`${styles.button} ${styles.view}`}>View</button>
                             </Link>
                                 <button className={`${styles.button} ${styles.delete}`}>Delete</button>

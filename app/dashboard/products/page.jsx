@@ -9,7 +9,7 @@ const ProductsPage = () => {
         <div className={styles.container}>
             <div className={styles.top}>
                 <SearchComponent placeholder="Search for a product..." />
-                <Link href="/dashboard/products/add">
+                <Link href="/dashboard/products/addNew">
                     <button className={styles.addButton}> Add New </button>
                 </Link>
             </div>
@@ -30,11 +30,11 @@ const ProductsPage = () => {
                             <div className={styles.product}>
                                 <Image 
                                     src="/noproduct.jpg"
-                                    alt="Avatar"
+                                    alt="Product"
                                     width={40}
                                     height={40}
                                     className={styles.productImage}
-                                /> Matthew Norman
+                                /> Test Product
                             </div>
                         </td>
                         <td>Desc</td>
@@ -44,7 +44,7 @@ const ProductsPage = () => {
                         <td>
                             <div className={styles.buttons}>
 
-                            <Link href="/"> 
+                            <Link href="/dashboard/products/test"> 
                                 <button className={`${styles.button} ${styles.view}`}>View</button>
                             </Link>
                                 <button className={`${styles.button} ${styles.delete}`}>Delete</button>
