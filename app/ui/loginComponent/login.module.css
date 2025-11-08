@@ -16,9 +16,11 @@
     flex-direction: column;
     justify-content: center;
     gap: 30px;
+    align-items: center;
 }
 
 .form input {
+    width: 100%;
     padding: 30px;
     border: 2px solid #2e374a;
     border-radius: 5px;
@@ -27,6 +29,7 @@
 }
 
 .form button {
+    width: 100%;
     padding: 30px;
     background-color: teal;
     color: var(--text);
