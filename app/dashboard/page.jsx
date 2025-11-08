@@ -1,3 +1,4 @@
+import React from "react";
 import CardComponent from "../ui/dashboardComponent/cardComponent/cardComponent";
 import ChartComponent from "../ui/dashboardComponent/chartComponent/chartComponent";
 import styles from "../ui/dashboardComponent/dashboard.module.css";

@@ -1,3 +1,4 @@
+import React from "react";
 import Pagination from "@/app/ui/dashboardComponent/pagination/paginationComponent";
 import SearchComponent from "@/app/ui/dashboardComponent/searchComponent/searchComponent";
 import styles from "@/app/ui/dashboardComponent/users/users.module.css";
