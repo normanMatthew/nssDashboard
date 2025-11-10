@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import styles from "./chartComponent.module.css";
 

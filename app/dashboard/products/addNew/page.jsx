@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "@/app/ui/products/addProduct/addProduct.module.css";
 
 const AddNewProduct = () => {

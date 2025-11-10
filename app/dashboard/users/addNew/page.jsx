@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "@/app/ui/dashboardComponent/users/addUser/addUser.module.css";
 
 const AddNewUser = () => {

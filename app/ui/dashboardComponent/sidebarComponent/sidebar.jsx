@@ -2,6 +2,7 @@ import styles from "../../../ui/dashboardComponent/sidebarComponent/sidebar.modu
 import { MdDashboard, MdSupervisedUserCircle, MdShoppingBag, MdAttachMoney, MdWork, MdAnalytics, MdPeople, MdOutlineSettings, MdHelpCenter, MdLogout } from 'react-icons/md';
 import MenuLink from "./menuLinkComponent/menuLinkComponent";
 import Image from 'next/image'
+import React from "react";
 
 
 const menuItems = [

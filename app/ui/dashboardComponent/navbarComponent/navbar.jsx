@@ -1,4 +1,5 @@
 "use client"
+import React from "react";
 import { usePathname } from "next/navigation";
 import styles from "./navbar.module.css";
 import { MdNotifications, MdOutlineChat, MdPublic, MdSearch,} from 'react-icons/md';

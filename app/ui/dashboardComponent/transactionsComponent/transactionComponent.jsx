@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./transactionsComponent.module.css";
+import React from "react";
 
 const TransactionComponent = () => {
     return (

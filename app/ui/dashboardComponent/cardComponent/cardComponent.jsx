@@ -1,3 +1,4 @@
+import React from "react";
 import { MdSupervisedUserCircle } from "react-icons/md";
 import styles from "./cardComponent.module.css";
 

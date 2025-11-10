@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "@/app/ui/dashboardComponent/users/singleUser/singleUser.module.css";
 import Image from "next/image";
 
