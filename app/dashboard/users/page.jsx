@@ -1,7 +1,7 @@
 import React from "react";
-import Pagination from "@/app/ui/dashboardComponent/pagination/paginationComponent";
-import SearchComponent from "@/app/ui/dashboardComponent/searchComponent/searchComponent";
-import styles from "@/app/ui/dashboardComponent/users/users.module.css";
+import Pagination from "../../ui/dashboardComponent/pagination/paginationComponent.jsx";
+import SearchComponent from "../../ui/dashboardComponent/searchComponent/searchComponent.jsx";
+import styles from "../../ui/dashboardComponent/users/users.module.css";
 import Image from "next/image";
 import Link from "next/link";
 

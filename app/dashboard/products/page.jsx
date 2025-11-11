@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import styles from "@/app/ui/products/products.module.css";
-import SearchComponent from "@/app/ui/dashboardComponent/searchComponent/searchComponent.jsx";
-import Pagination from "@/app/ui/dashboardComponent/pagination/paginationComponent.jsx";
+import styles from "../../ui/products/products.module.css"
+import SearchComponent from "../../ui/dashboardComponent/searchComponent/searchComponent.jsx";
+import Pagination from "../../ui/dashboardComponent/pagination/paginationComponent.jsx";
 
 const ProductsPage = () => {
     return (
