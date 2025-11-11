@@ -1,6 +1,6 @@
+import React from "react";
 import { MdSearch } from "react-icons/md";
 import styles from "./searchComponent.module.css";
-import React from "react";
 
 const SearchComponent = ({placeholder}) => {
     return (
