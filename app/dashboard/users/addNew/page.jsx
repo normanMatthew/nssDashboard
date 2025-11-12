@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../../ui/dashboardComponent/users/addUser/addUser.module.css";
+import styles from "@/ui/dashboardComponent/users/addUser/addUser.module.css";
 
 const AddNewUser = () => {
     return (

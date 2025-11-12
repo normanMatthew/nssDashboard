@@ -1,4 +1,4 @@
-import styles from "../../../ui/dashboardComponent/sidebarComponent/sidebar.module.css";
+import styles from "@/ui/dashboardComponent/sidebarComponent/sidebar.module.css";
 import { MdDashboard, MdSupervisedUserCircle, MdShoppingBag, MdAttachMoney, MdWork, MdAnalytics, MdPeople, MdOutlineSettings, MdHelpCenter, MdLogout } from 'react-icons/md';
 import MenuLink from "./menuLinkComponent/menuLinkComponent";
 import Image from 'next/image'

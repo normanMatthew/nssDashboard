@@ -1,8 +1,8 @@
 import React from "react";
-import Navbar from "../ui/dashboardComponent/navbarComponent/navbar";
-import Sidebar from "../ui/dashboardComponent/sidebarComponent/sidebar";
-import styles from '../ui/dashboardComponent/dashboard.module.css';
-import Footer from "../ui/dashboardComponent/footer/footer";
+import Navbar from "@/ui/dashboardComponent/navbarComponent/navbar";
+import Sidebar from "@/ui/dashboardComponent/sidebarComponent/sidebar";
+import styles from '@/ui/dashboardComponent/dashboard.module.css';
+import Footer from "@/ui/dashboardComponent/footer/footer";
 
 
 const Layout = ({children}) => {

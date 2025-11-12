@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../../ui/products/singleProduct/singleProduct.module.css";
+import styles from "@/ui/products/singleProduct/singleProduct.module.css";
 import Image from "next/image";
 
 const SingleProductPage = () => {

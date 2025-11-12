@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    //core next.js base tsconfig settings
     "lib": [
       "dom",
       "dom.iterable",
@@ -7,7 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": false, //can enable later as we continue integrating typescript
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
@@ -16,17 +17,33 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+
+    //cleaner imports; makes all imports relative to the project root
+    "baseUrl": ".",
+    //enable @ import aliasing
+    "paths": {
+      "@/*": ["app/*"],
+      "@components/*": ["app/ui/*"], //ui components
+      "@/lib/*": ["lib/*"], // utilities and helpers
+      "@/styles/*": ["styles/*"]  //global styles or scss variables
+    },
+
     "plugins": [
       {
         "name": "next"
-      }
-    ]
+      },
+    ],
+    //type safety improvement for react, ensuring vscode + eslint have full autocomplete and type support
+    "types": ["node", "react"],
   },
+  //lets typescript analyze my exisitng javascript files until migration
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
   ],
   "exclude": [
     "node_modules"
