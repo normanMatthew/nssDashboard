@@ -44,7 +44,7 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx"
-, "vitest.config.ts"  ],
+, "vitest.config.ts", "next.config.cjs"  ],
   "exclude": [
     "node_modules"
   ]
