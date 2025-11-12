@@ -34,7 +34,7 @@
       },
     ],
     //type safety improvement for react, ensuring vscode + eslint have full autocomplete and type support
-    "types": ["node", "react"],
+    "types": ["node", "react", "vitest/globals"],
   },
   //lets typescript analyze my exisitng javascript files until migration
   "include": [
@@ -44,7 +44,7 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx"
-  ],
+, "vitest.config.ts"  ],
   "exclude": [
     "node_modules"
   ]
