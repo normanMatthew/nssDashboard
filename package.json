@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rmraf .next node_modules",
-    "test": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
   },
   "type": "module",
   "dependencies": {
