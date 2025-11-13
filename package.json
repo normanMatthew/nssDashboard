@@ -10,6 +10,7 @@
     "clean": "rmraf .next node_modules",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:changed": "vitest related --changed",
     "test:watch": "vitest watch"
   },
   "type": "module",
