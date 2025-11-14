@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:changed": "vitest related --changed",
-    "test:watch": "vitest watch"
+    "test:watch": "vitest watch",
+    "test:related": "vitest related --coverage"
   },
   "type": "module",
   "dependencies": {
