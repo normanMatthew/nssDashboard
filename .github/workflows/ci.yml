@@ -29,7 +29,6 @@ jobs:
           path: |
             .next/cache          # Next.js build cache
             node_modules/.vite   # Vitest transform cache
-            coverage             # Keep coverage reports
           key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-
@@ -41,8 +40,50 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Run Tests with coverage
+      - name: Detect changed files
+        id: changed
+        uses: tj-actions/changed-files@v44
+
+      - name: Determine test mode (related or full)
+        id: testmode
+        run: |
+          echo "Changed files:"
+          echo "${{ steps.changed.outputs.all_changed_files }}"
+
+          # Convert newline list into space-separated files
+          FILES="${{ steps.changed.outputs.all_changed_files }}"
+
+          # Decide whether to run full suite:
+          if [[ -z "$FILES" ]]; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # If critical files changed → run full suite
+          if echo "$FILES" | grep -E "package.json|vitest.config|next.config|tsconfig|\.github/workflows"; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # If test files changed → run full suite
+          if echo "$FILES" | grep "__tests__"; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Otherwise → related test mode
+          echo "mode=related" >> $GITHUB_OUTPUT
+
+      - name: Run Tests
+        if: steps.testmode.outputs.mode == 'full'
         run: npm run test
+
+      - name: Run Only Related Tests
+        if: steps.testmode.outputs.mode == 'related'
+        run: |
+          FILES="${{ steps.changed.outputs.all_changed_files }}"
+          npm run test:related -- $FILES
+
 
       - name: Build Next.js
         run: npm run build
