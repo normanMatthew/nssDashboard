@@ -5,7 +5,11 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '/app/.env' });
 
 //persistent connection object (kept in module scope). Connection is declared outside function so it persists between calls.
-const connection = {};
+interface Connection {
+    isConnected?: number;
+}
+
+const connection: Connection = {};
 
 // Connect to MongoDB database.
 export const connectToDatabase = async () => {
