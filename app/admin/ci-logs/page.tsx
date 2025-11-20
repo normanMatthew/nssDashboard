@@ -7,4 +7,4 @@ const ContinuousIntegrationLogs = () => {
     </div>
 };
 
- ContinuousIntegrationLogs;
+export default ContinuousIntegrationLogs;
