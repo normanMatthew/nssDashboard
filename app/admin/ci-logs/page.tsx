@@ -27,4 +27,10 @@ export default function CiLogsDashBoardPage (){
         }
         fetchLogs();
     }, [page, filterStatus]);
+
+    return (
+        <div className="mb-4">
+            
+        </div>
+    );
 }
