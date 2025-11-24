@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/utils";
-import CiWebhookLog from "@/lib/models/CiWebhookLog";
+import CiWebhookLog, { ICiWebHookLog } from "@/lib/models/CiWebhookLog";
 
 export async function GET(req: Request) {
     // connect to mongodb database
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const branch = url.searchParams.get("branch") || "";
 
     //build dynamic query object
-    const query: any = {};    
+    const query: Partial<Record<keyof ICiWebHookLog, unknown>> = {};    
     
     if (status) query.status = status;
     if (repo) query.repo = { $regex: repo, $options: "i" };
