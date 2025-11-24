@@ -1,10 +1,12 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
   extends: [
     'eslint:recommended',
     'next/core-web-vitals',
-    'plugin:react/recommended'
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
-  plugins: ['react'],
+  plugins: ['react', '@typescript-eslint'],
   env: {
     browser: true,
     es2021: true,
@@ -26,11 +28,15 @@ module.exports = {
   rules: {
     'react/no-unknown-property': 'error',
     'react/prop-types': 'off',
+
+    // Disable JS version so TS version can run
     'no-unused-vars': 'off',
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_",
-      "caughtErrorsIgnorePattern": "^_"
+
+    // Correctly enabled now that plugin is installed
+    '@typescript-eslint/no-unused-vars': ['error', {
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      caughtErrorsIgnorePattern: '^_'
     }]
   },
   settings: {
