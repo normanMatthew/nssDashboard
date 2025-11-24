@@ -11,33 +11,17 @@ interface Connection {
 
 const connection: Connection = {};
 
-// Connect to MongoDB database.
+//Connect to database
 export const connectToDatabase = async () => {
-    //Check if already connected. If so, reuse existing connection.
+    const uri = process.env.CONNECTION_STRING;
+    if (!uri) throw new Error("CONNECTION_STRING environment variable not set");
+
     if (connection.isConnected) {
-        console.log('Using existing MongoDB database connection');
+        console.log("Using existing MongoDB database connection");
         return;
     }
 
-    const uri = process.env.CONNECTION_STRING;
-    if (!uri) {
-        throw new Error(
-            "Database connection failed: CONNECTION_STRING environment variable not set"
-        );
-    }
-
-    try {
-        const db = await mongoose.connect(uri);
-
-        //Retrieve connection status.
-        connection.isConnected = db.connections[0].readyState;
-
-        console.log('Connected to MongoDB database successfully');
-    } catch (error) {
-        console.error('Error connecting to MongoDB database:', error);
-        //Safely rethrow the error, preserving stack and message.
-        throw error instanceof Error
-        ? new Error(`Database connection failed: ${error.message}`)
-        : new Error("Unknown database connection error");
-    }
+    const db = await mongoose.connect(uri);
+    connection.isConnected = db.connections[0].readyState;
+    console.log("Connected to MongoDB successfully");
 }
