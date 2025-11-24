@@ -1,7 +1,7 @@
 // <reference types="vitest" />
 import { defineConfig } from 'vitest/config'
-// @ts-ignore: types are present under node-style resolution; consider setting "moduleResolution": "node16" or "nodenext" in tsconfig.json
 import react from '@vitejs/plugin-react'
+import path from "path";
 
 export default defineConfig({
   plugins: [react()],
@@ -22,4 +22,10 @@ export default defineConfig({
       }
     },
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "app"),   // back to app
+      "@root": path.resolve(__dirname),      // root alias for your lib/
+    }
+  }
 })

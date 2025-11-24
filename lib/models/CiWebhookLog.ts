@@ -8,7 +8,7 @@ export interface ICiWebHookLog {
   branch: string;
   commit: string;
   timestamp?: Date;
-  raw: any;
+  raw: unknown;
 }
 
 // Mongoose schema
