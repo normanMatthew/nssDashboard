@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/utils";
-import CiWebhookLog, { ICiWebHookLog } from "@/lib/models/CiWebhookLog";
+import { connectToDatabase } from "../../../lib/utils";
+import CiWebhookLog, { ICiWebHookLog } from "../../../lib/models/CiWebhookLog";
 
 export async function GET(req: Request) {
     // connect to mongodb database
