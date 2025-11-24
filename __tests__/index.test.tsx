@@ -1,7 +1,7 @@
 // app/__tests__/index.test.tsx
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Home from '../page';
+import Home from '@/page';
 
 test('renders homepage correctly', () => {
   render(<Home />);
