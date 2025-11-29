@@ -9,6 +9,8 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "clean": "rmraf .next node_modules",
+    "smoke": "tsx __tests__/smoke/ciLogsSmokeTest.ts",
+    "seed:ci": "node scripts/seedCiLogs.js",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:changed": "vitest related --changed",
@@ -23,6 +25,7 @@
     "mongodb": "^7.0.0",
     "mongoose": "^8.19.3",
     "next": "^14.2.32",
+    "node-fetch": "^3.3.2",
     "postcss": "^8.5.6",
     "react": "18",
     "react-dom": "18",
@@ -49,6 +52,7 @@
     "mongodb-memory-server": "^10.3.0",
     "rimraf": "^6.1.0",
     "supertest": "^7.1.4",
+    "tsx": "^4.20.6",
     "vitest": "^4.0.8"
   }
 }
