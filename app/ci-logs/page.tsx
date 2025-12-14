@@ -1,9 +1,10 @@
 "use client"
 import React from "react";
 import { ICiWebHookLog } from "@/lib/models/CiWebhookLog";
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Th } from "components/Table/Th";
 import { StatusTags } from "components/Table/StatusTags";
+import { usePolling } from "@/lib/hooks/usePolling";
 
 interface CiLogTableRow extends ICiWebHookLog {
     _id: string,
@@ -30,10 +31,8 @@ export default function CiLogsDashBoardPage() {
         }
     }
 
-    //Fetch logs from API route
-    useEffect(() => {
-        async function fetchLogs() {
-            const params = new URLSearchParams({
+    const fetchLogs = useCallback(async () => {
+        const params = new URLSearchParams({
                 page: page.toString(),
                 status: filterStatus,
                 repo: filterRepo,
@@ -47,9 +46,18 @@ export default function CiLogsDashBoardPage() {
 
             setLogs(data.logs);
             setTotalPages(data.totalPages);
-        }
+    },[page, filterStatus, filterRepo, filterBranch, sortField, sortOrder,]);
+
+    //Fetch logs from API route
+    useEffect(() => {
         fetchLogs();
-    }, [page, filterStatus, filterRepo, filterBranch, sortField, sortOrder]);
+    }, [fetchLogs]);
+
+    usePolling({
+        callback: fetchLogs,
+        intervalMs: 10_000,
+        enabled: true,
+    });
 
     return (
         <div>
