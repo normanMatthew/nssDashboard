@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useRef } from "react";
 import { ICiWebHookLog } from "@/lib/models/CiWebhookLog";
 import { useCallback, useState, useEffect } from "react";
 import { Th } from "components/Table/Th";
@@ -31,6 +31,8 @@ export default function CiLogsDashBoardPage() {
         }
     }
 
+    const latestTimestampRef = useRef<string | null>(null);
+
     const fetchLogs = useCallback(async () => {
         const params = new URLSearchParams({
                 page: page.toString(),
@@ -43,6 +45,16 @@ export default function CiLogsDashBoardPage() {
 
             const res = await fetch(`/api/ci-logs?${params.toString()}`);
             const data = await res.json();
+
+            if (!data.logs?.length) return;
+
+            const newestTimestamp = data.logs[0]?.timestamp;
+
+            if (latestTimestampRef.current === newestTimestamp) {
+                return; //no changes - skip update
+            }
+
+            latestTimestampRef.current = newestTimestamp;
 
             setLogs(data.logs);
             setTotalPages(data.totalPages);
