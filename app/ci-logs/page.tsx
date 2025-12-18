@@ -22,6 +22,9 @@ export default function CiLogsDashBoardPage() {
     const [sortField, setSortField] = useState("timestamp");
     const [sortOrder, setSortOrder] = useState("desc");
 
+    const [isPolling, setIsPolling] = useState(false);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
     function toggleSort(field: string) {
         if (sortField === field) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -34,7 +37,10 @@ export default function CiLogsDashBoardPage() {
     const latestTimestampRef = useRef<string | null>(null);
 
     const fetchLogs = useCallback(async () => {
-        const params = new URLSearchParams({
+        setIsPolling(true);
+
+        try {
+            const params = new URLSearchParams({
                 page: page.toString(),
                 status: filterStatus,
                 repo: filterRepo,
@@ -58,7 +64,11 @@ export default function CiLogsDashBoardPage() {
 
             setLogs(data.logs);
             setTotalPages(data.totalPages);
-    },[page, filterStatus, filterRepo, filterBranch, sortField, sortOrder,]);
+            setLastUpdated(new Date());
+        } finally {
+            setIsPolling(false);
+        }
+    }, [page, filterStatus, filterRepo, filterBranch, sortField, sortOrder,]);
 
     //Fetch logs from API route
     useEffect(() => {
@@ -101,6 +111,22 @@ export default function CiLogsDashBoardPage() {
                     placeholder="Filter Branch..."
                     className="border px-2 py-1"
                 />
+            </div>
+
+            {/* Live UI indicator */}
+            <div className="flex items-center justify-between mb-3 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                    <span 
+                        className={`h-2 w-2 rounded-full ${
+                            isPolling ? "bg-green-500 animate-pulse" : "bg-gray-400"
+                        }`}
+                    />
+                    <span>{isPolling ? "Live Polling" : "Idle"}</span>
+                </div>
+
+                {lastUpdated && (
+                    <span>Last Updated: {lastUpdated.toLocaleDateString()}</span>
+                )}
             </div>
 
             {/* Table */}
