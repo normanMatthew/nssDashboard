@@ -25,6 +25,21 @@ export default function CiLogsDashBoardPage() {
     const [isPolling, setIsPolling] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+    const [pollError, setPollError] = useState<string | null>(null);
+
+    const [isTabVisible, setIsTabVisible] = useState(true);
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            setIsTabVisible(!document.hidden);
+        };
+
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () =>
+            document.removeEventListener("visibilitychange", handleVisibility);
+    }, []);
+
+   
     function toggleSort(field: string) {
         if (sortField === field) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -36,10 +51,14 @@ export default function CiLogsDashBoardPage() {
 
     const latestTimestampRef = useRef<string | null>(null);
 
-    const fetchLogs = useCallback(async () => {
-        setIsPolling(true);
+    //Track Failures
+    const failureCountRef = useRef(0);
 
+    const fetchLogs = useCallback(async () => {
+        if (!isTabVisible) return;
+        setIsPolling(true);
         try {
+            setPollError(null);
             const params = new URLSearchParams({
                 page: page.toString(),
                 status: filterStatus,
@@ -61,14 +80,25 @@ export default function CiLogsDashBoardPage() {
             }
 
             latestTimestampRef.current = newestTimestamp;
+            failureCountRef.current = 0;
 
             setLogs(data.logs);
             setTotalPages(data.totalPages);
             setLastUpdated(new Date());
+        } catch (error) {
+            failureCountRef.current += 1;
+            console.error("Polling failed:", error);
+            setPollError("Live updates paused due to a network error.");
         } finally {
             setIsPolling(false);
         }
-    }, [page, filterStatus, filterRepo, filterBranch, sortField, sortOrder,]);
+    }, [page, filterStatus, filterRepo, filterBranch, sortField, sortOrder, isTabVisible]);
+
+    useEffect(() => {
+        if (isTabVisible) {
+            fetchLogs();
+        }
+    }, [isTabVisible, fetchLogs])
 
     //Fetch logs from API route
     useEffect(() => {
@@ -125,9 +155,16 @@ export default function CiLogsDashBoardPage() {
                 </div>
 
                 {lastUpdated && (
-                    <span>Last Updated: {lastUpdated.toLocaleDateString()}</span>
+                    <span>Last Updated: {lastUpdated.toLocaleTimeString()}</span>
                 )}
             </div>
+
+            {/* Poll Error indicator */}
+            {pollError && (
+                <div className="mt-2 text-xs text-red-500">
+                    {pollError}
+                </div>
+            )}
 
             {/* Table */}
             <table className="w-full table-auto border-collapse border border-gray-300">
