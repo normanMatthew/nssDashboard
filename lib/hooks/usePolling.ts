@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 interface UsePollingOptions {
     callback: () => Promise<void>;
-    intervalMs: number;
+    intervalMs: number | (() => number);
     enabled?: boolean;
 }
 
@@ -12,44 +12,50 @@ export function usePolling({
     enabled = true,
 }: UsePollingOptions) {
     const isRunningRef = useRef(false);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
 
     useEffect(() => {
         if (!enabled) return;
+        const resolveInterval = () =>
+            typeof intervalMs === "function" ? intervalMs() : intervalMs;
+
+        let cancelled = false;
 
         const run = async () => {
-            if (isRunningRef.current) return;
+            if (cancelled || isRunningRef.current) return;
 
             try {
                 isRunningRef.current = true;
                 await callback();
             } finally {
                 isRunningRef.current = false;
-            }
-        };
 
-        const start = () => {
-            if (intervalRef.current) return;
-            intervalRef.current = setInterval(run, intervalMs);
-            run(); //immediate first run
-        };
-
-        const stop = () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
+                if (!cancelled && !document.hidden) {
+                    timeoutRef.current = setTimeout(run, resolveInterval());
+                }
             }
         };
 
         const handleVisibility = () => {
-            document.hidden ? stop() : run();
+            if (document.hidden) {
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                    timeoutRef.current = null;
+                }
+            } else {
+                run(); //resume immediately
+            }
         };
 
         document.addEventListener("visibilitychange", handleVisibility);
-        start();
+        run(); //initial start
 
         return () => {
-            stop();
+            cancelled = true;
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
             document.removeEventListener("visibilitychange", handleVisibility);
         };
     }, [callback, intervalMs, enabled]);
