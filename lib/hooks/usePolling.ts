@@ -6,6 +6,13 @@ interface UsePollingOptions {
     enabled?: boolean;
 }
 
+type PollingStatus =
+    | "idle"
+    | "running"
+    | "paused"
+    | "error"
+    | "stopped";
+
 export function usePolling({
     callback,
     intervalMs,
@@ -13,6 +20,9 @@ export function usePolling({
 }: UsePollingOptions) {
     const isRunningRef = useRef(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const failureCountRef = useRef(0);
+    const lastSuccessAtRef = useRef<number | null>(null);
+    const statusRef = useRef<PollingStatus>("idle");
 
 
     useEffect(() => {
@@ -22,12 +32,27 @@ export function usePolling({
 
         let cancelled = false;
 
+        const MAX_FAILURES = 10;
+
         const run = async () => {
             if (cancelled || isRunningRef.current) return;
+
+            if (failureCountRef.current >= MAX_FAILURES) {
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                    timeoutRef.current = null;
+                }
+                return;
+            }
 
             try {
                 isRunningRef.current = true;
                 await callback();
+
+                failureCountRef.current = 0;
+                lastSuccessAtRef.current = Date.now();
+            } catch {
+                failureCountRef.current += 1;
             } finally {
                 isRunningRef.current = false;
 
@@ -38,13 +63,9 @@ export function usePolling({
         };
 
         const handleVisibility = () => {
-            if (document.hidden) {
-                if (timeoutRef.current) {
-                    clearTimeout(timeoutRef.current);
-                    timeoutRef.current = null;
-                }
-            } else {
-                run(); //resume immediately
+            if (!document.hidden) {
+                failureCountRef.current = 0;
+                run();
             }
         };
 
@@ -59,4 +80,16 @@ export function usePolling({
             document.removeEventListener("visibilitychange", handleVisibility);
         };
     }, [callback, intervalMs, enabled]);
+
+    return {
+        get status() {
+            return statusRef.current;
+        },
+        get failureCount() {
+            return failureCountRef.current;
+        },
+        get lastSuccessAt() {
+            return lastSuccessAtRef.current;
+        },
+    };
 }
