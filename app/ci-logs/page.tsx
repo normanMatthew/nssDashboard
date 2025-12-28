@@ -29,6 +29,8 @@ export default function CiLogsDashBoardPage() {
 
     const [isTabVisible, setIsTabVisible] = useState(true);
 
+    const shouldPoll = page === 1 && isTabVisible;
+
     useEffect(() => {
         const handleVisibility = () => {
             setIsTabVisible(!document.hidden);
@@ -59,6 +61,7 @@ export default function CiLogsDashBoardPage() {
         setIsPolling(true);
         try {
             setPollError(null);
+
             const params = new URLSearchParams({
                 page: page.toString(),
                 status: filterStatus,
@@ -108,8 +111,10 @@ export default function CiLogsDashBoardPage() {
     usePolling({
         callback: fetchLogs,
         intervalMs: 10_000,
-        enabled: true,
+        enabled: shouldPoll,
     });
+
+   
 
     return (
         <div>
@@ -148,10 +153,10 @@ export default function CiLogsDashBoardPage() {
                 <div className="flex items-center gap-2">
                     <span 
                         className={`h-2 w-2 rounded-full ${
-                            isPolling ? "bg-green-500 animate-pulse" : "bg-gray-400"
-                        }`}
+                            shouldPoll ? "bg-green-500" : "bg-gray-400"
+                        } ${isPolling ? "animate-pulse" : ""}`}
                     />
-                    <span>{isPolling ? "Live Polling" : "Idle"}</span>
+                    <span>{shouldPoll ? "Live Polling" : "Idle"}</span>
                 </div>
 
                 {lastUpdated && (
