@@ -38,6 +38,8 @@ export function usePolling({
             if (cancelled || isRunningRef.current) return;
 
             if (failureCountRef.current >= MAX_FAILURES) {
+                statusRef.current = "stopped";
+
                 if (timeoutRef.current) {
                     clearTimeout(timeoutRef.current);
                     timeoutRef.current = null;
@@ -47,12 +49,17 @@ export function usePolling({
 
             try {
                 isRunningRef.current = true;
+
+                statusRef.current = "running";
+
                 await callback();
 
                 failureCountRef.current = 0;
                 lastSuccessAtRef.current = Date.now();
+                statusRef.current = "idle";
             } catch {
                 failureCountRef.current += 1;
+                statusRef.current = "error";
             } finally {
                 isRunningRef.current = false;
 
@@ -63,10 +70,14 @@ export function usePolling({
         };
 
         const handleVisibility = () => {
-            if (!document.hidden) {
-                failureCountRef.current = 0;
-                run();
+            if (document.hidden) {
+                statusRef.current = "paused";
+                return;
             }
+
+            failureCountRef.current = 0;
+            statusRef.current = "idle";
+            run();
         };
 
         document.addEventListener("visibilitychange", handleVisibility);
