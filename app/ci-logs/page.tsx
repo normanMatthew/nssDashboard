@@ -41,7 +41,7 @@ export default function CiLogsDashBoardPage() {
             document.removeEventListener("visibilitychange", handleVisibility);
     }, []);
 
-   
+
     function toggleSort(field: string) {
         if (sortField === field) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -72,6 +72,7 @@ export default function CiLogsDashBoardPage() {
             });
 
             const res = await fetch(`/api/ci-logs?${params.toString()}`);
+            
             const data = await res.json();
 
             if (!data.logs?.length) return;
@@ -114,7 +115,7 @@ export default function CiLogsDashBoardPage() {
         enabled: shouldPoll,
     });
 
-   
+
 
     return (
         <div>
@@ -151,10 +152,9 @@ export default function CiLogsDashBoardPage() {
             {/* Live UI indicator */}
             <div className="flex items-center justify-between mb-3 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
-                    <span 
-                        className={`h-2 w-2 rounded-full ${
-                            shouldPoll ? "bg-green-500" : "bg-gray-400"
-                        } ${isPolling ? "animate-pulse" : ""}`}
+                    <span
+                        className={`h-2 w-2 rounded-full ${shouldPoll ? "bg-green-500" : "bg-gray-400"
+                            } ${isPolling ? "animate-pulse" : ""}`}
                     />
                     <span>{shouldPoll ? "Live Polling" : "Idle"}</span>
                 </div>

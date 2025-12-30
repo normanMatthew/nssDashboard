@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface UsePollingOptions {
     callback: () => Promise<void>;
@@ -6,7 +6,7 @@ interface UsePollingOptions {
     enabled?: boolean;
 }
 
-type PollingStatus =
+export type PollingStatus =
     | "idle"
     | "running"
     | "paused"
@@ -23,6 +23,11 @@ export function usePolling({
     const failureCountRef = useRef(0);
     const lastSuccessAtRef = useRef<number | null>(null);
     const statusRef = useRef<PollingStatus>("idle");
+    const [, forceRender] = useState(0);
+
+    const notify = () => {
+        forceRender(x => x + 1);
+    };
 
 
     useEffect(() => {
@@ -39,6 +44,7 @@ export function usePolling({
 
             if (failureCountRef.current >= MAX_FAILURES) {
                 statusRef.current = "stopped";
+                notify();
 
                 if (timeoutRef.current) {
                     clearTimeout(timeoutRef.current);
@@ -51,15 +57,18 @@ export function usePolling({
                 isRunningRef.current = true;
 
                 statusRef.current = "running";
+                notify();
 
                 await callback();
 
                 failureCountRef.current = 0;
                 lastSuccessAtRef.current = Date.now();
                 statusRef.current = "idle";
+                notify();
             } catch {
                 failureCountRef.current += 1;
                 statusRef.current = "error";
+                notify();
             } finally {
                 isRunningRef.current = false;
 
@@ -72,12 +81,21 @@ export function usePolling({
         const handleVisibility = () => {
             if (document.hidden) {
                 statusRef.current = "paused";
+                notify();
                 return;
             }
+            /*
+            stopped remains terminal, and visibility changes can't override a hard stop.
+            terminal: polling does not resume automatically, visibility change does not restart it.
+            only a remount, 'enable' toggle, or manual reset restarts it.
+            */
+            if(statusRef.current !== "stopped") {
+                failureCountRef.current = 0;
+                statusRef.current = "idle";
+                notify();
+                run();
+            }
 
-            failureCountRef.current = 0;
-            statusRef.current = "idle";
-            run();
         };
 
         document.addEventListener("visibilitychange", handleVisibility);
