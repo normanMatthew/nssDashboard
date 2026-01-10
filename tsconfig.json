@@ -25,7 +25,8 @@
       "@/*": ["app/*"],
       "@components/*": ["app/ui/*"], //ui components
       "@/lib/*": ["lib/*"], // utilities and helpers
-      "@/styles/*": ["styles/*"]  //global styles or scss variables
+      "@/styles/*": ["styles/*"],  //global styles or scss variables
+      "@root/*": ["*"]
     },
 
     "plugins": [

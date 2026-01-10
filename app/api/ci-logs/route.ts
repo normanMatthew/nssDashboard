@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../../lib/utils";
 import CiWebhookLog, { ICiWebHookLog } from "../../../lib/models/CiWebhookLog";
+import { validateCiLogsQuery } from "@/lib/api/ciLogs.validation";
 
 
 /*
@@ -17,6 +18,15 @@ export async function GET(req: Request) {
     const status = url.searchParams.get("status") || "";
     const repo = url.searchParams.get("repo") || "";
     const branch = url.searchParams.get("branch") || "";
+
+    //Validator
+    const searchParams = new URL(req.url).searchParams;
+    const validation = validateCiLogsQuery(searchParams);
+
+    if (validation.ok === false) {
+        const { error } = validation;
+        return NextResponse.json(error, {status: 400});
+    }
 
     //build dynamic query object
     const query: Partial<Record<keyof ICiWebHookLog, unknown>> = {};    

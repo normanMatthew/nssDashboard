@@ -1,5 +1,5 @@
 # Project Snapshot — Phases 1–5
-_Last Updated: Phase 3.7 Complete_
+_Last Updated: Phase 3.9 Started_
 
 This document represents the canonical system snapshot for this project.  
 It is intended to preserve architectural decisions, implementation state, and phase progress across tooling, deployments, and conversational context.
@@ -152,7 +152,7 @@ Polling is no longer magic — it is **infrastructure with telemetry**.
 
 ---
 
-## PHASE 3.8 — BACKEND HARDENING (NEXT)
+## PHASE 3.8 — BACKEND HARDENING (IN PROGRESS)
 
 ### Objectives
 Make the API resilient, safe, and un-abusable.
@@ -170,7 +170,7 @@ Make the API resilient, safe, and un-abusable.
 - Proper unit tests for APIs
 
 ### Status
-⬜ Not started
+✅ Complete
 
 ---
 
@@ -187,7 +187,7 @@ Prevent accidental or malicious overload.
 - Frontend awareness of throttling
 
 ### Status
-⬜ Not started
+🚀 Started
 
 ---
 
@@ -246,5 +246,5 @@ Eliminate unnecessary payloads and renders.
 - ✅ Polling system stable, observable, and validated
 - ✅ UI truthfully reflects backend behavior
 - ✅ Security posture clean
-- ⏭ Ready to proceed to **Phase 3.8**
+- ⏭ Currently Working On: **Phase 3.9 -- Rate Limiting**
 
