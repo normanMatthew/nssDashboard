@@ -19,7 +19,7 @@ export default function CiLogsDashBoardPage() {
     const [filterRepo, setFilterRepo] = useState("");
     const [filterBranch, setFilterBranch] = useState("");
 
-    const [sortField, setSortField] = useState("timestamp");
+    const [sortField, setSortField] = useState("createdAt");
     const [sortOrder, setSortOrder] = useState("desc");
 
     const [isPolling, setIsPolling] = useState(false);
@@ -217,7 +217,6 @@ export default function CiLogsDashBoardPage() {
                     Next
                 </button>
             </div>
-
         </div>
     );
 }

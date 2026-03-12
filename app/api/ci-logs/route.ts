@@ -2,15 +2,30 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../../lib/utils";
 import CiWebhookLog, { ICiWebHookLog } from "../../../lib/models/CiWebhookLog";
 import { validateCiLogsQuery } from "@/lib/api/ciLogs.validation";
+import { requestRateLimiter } from "@/lib/api/infrastructure/requestRateLimiter";
 
 
 /*
 * GET /api/ci-logs
 * Fetch Logs with Pagination, filtering, sorting
+* Preferred order: connect to database -> rate limiter -> validation -> query.
 */
 export async function GET(req: Request) {
     // connect to mongodb database
     await connectToDatabase();
+
+    // Rate Limiting
+    const rate = await requestRateLimiter(req, {
+        limit: 30,
+        windowMs: 60_000
+    });
+
+    if (rate.allowed === false) {
+        return NextResponse.json(
+            { error: "RATE_LIMITED", retryAfter: rate.retryAfter },
+            { status: 429 }
+        );
+    }
 
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get("page") || "1");
@@ -20,23 +35,23 @@ export async function GET(req: Request) {
     const branch = url.searchParams.get("branch") || "";
 
     //Validator
-    const searchParams = new URL(req.url).searchParams;
+    const searchParams = url.searchParams;
     const validation = validateCiLogsQuery(searchParams);
 
     if (validation.ok === false) {
         const { error } = validation;
-        return NextResponse.json(error, {status: 400});
+        return NextResponse.json(error, { status: 400 });
     }
 
     //build dynamic query object
-    const query: Partial<Record<keyof ICiWebHookLog, unknown>> = {};    
-    
+    const query: Partial<Record<keyof ICiWebHookLog, unknown>> = {};
+
     if (status) query.status = status;
     if (repo) query.repo = { $regex: repo, $options: "i" };
     if (branch) query.branch = { $regex: branch, $options: "i" };
-    
+
     const PAGE_SIZE = 10;
-    
+
     const total = await CiWebhookLog.countDocuments(query);
     const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -45,11 +60,17 @@ export async function GET(req: Request) {
 
     const logs = await CiWebhookLog.find(query)
         .sort({ [sortField]: sortOrder })
-        .skip(( page - 1) * PAGE_SIZE)
+        .skip((page - 1) * PAGE_SIZE)
         .limit(PAGE_SIZE)
         .lean();
 
-    return NextResponse.json({ logs, totalPages });
+    const response = NextResponse.json({ logs, totalPages });
+
+    response.headers.set("X-RateLimit-Limit", "30");
+    response.headers.set("X-RateLimit-Remaining", String(rate.remaining));
+    response.headers.set("X-RateLimit-Reset", String(rate.resetAt));
+
+    return response;
 }
 
 /*
@@ -57,15 +78,29 @@ export async function GET(req: Request) {
  * insert a new CI webhook log 
  */
 
- export async function POST(req: Request) {
+export async function POST(req: Request) {
+    //Connect to database.
     await connectToDatabase();
+
+    // Rate Limiting
+    const rate = await requestRateLimiter(req, {
+        limit: 10,
+        windowMs: 30_000
+    });
+
+    if (rate.allowed === false) {
+        return NextResponse.json(
+            { error: "RATE_LIMITED", retryAfter: rate.retryAfter },
+            { status: 429 }
+        );
+    }
 
     try {
         const body = await req.json();
 
         //runtime validation
         const required = ["eventType", "status", "repo", "branch", "commit"];
-        for ( const key of required ) {
+        for (const key of required) {
             if (!body[key]) {
                 return NextResponse.json(
                     { error: `Missing required field: ${key}` },
@@ -83,11 +118,15 @@ export async function GET(req: Request) {
             raw: body.raw || {},
             timestamp: new Date()
         });
-        return NextResponse.json({ success: true, log}, { status: 201 })
+        const response = NextResponse.json({ success: true, log }, { status: 201 });
+
+        response.headers.set("X-RateLimit-Limit", "10");
+        response.headers.set("X-RateLimit-Remaining", String(rate.remaining));
+        response.headers.set("X-RateLimit-Reset", String(rate.resetAt));
     } catch (error) {
         return NextResponse.json(
             { error: "Invalid JSON payload", detail: String(error) },
             { status: 400 }
         );
     }
- }
+}
