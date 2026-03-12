@@ -22,7 +22,15 @@ const CiWebhookLogSchema = new mongoose.Schema<ICiWebHookLog>({
   raw: { type: mongoose.Schema.Types.Mixed, required: true },
 });
 
-// Fix TypeScript “create not callable” by explicitly typing the Model
+//Compound index for filtering + sorting
+CiWebhookLogSchema.index({
+  status: 1,
+  repo: 1,
+  branch: 1,
+  createdAt: -1
+});
+
+// Fixed TypeScript “create not callable” error by explicitly typing the Model
 const CiWebhookLog = mongoose.models.CiWebhookLog as
   | mongoose.Model<ICiWebHookLog>
   | undefined;

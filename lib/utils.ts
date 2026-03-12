@@ -1,33 +1,47 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-// Load environment variables from .env file.
-import dotenv from 'dotenv';
+//Load environment variables from .env file
 dotenv.config();
 
-//persistent connection object (kept in module scope). Connection is declared outside function so it persists between calls.
-interface Connection {
-    isConnected?: number;
-    db?: typeof mongoose;
+// Persistent connection cache interface
+interface CachedConnection {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
 }
 
-const connection: Connection = {};
+//Extend the Node Global type
+declare global {
+   //eslint-disable-next-line no-var
+   var mongooseCache: CachedConnection | undefined;
+}
 
-//Connect to database
-export const connectToDatabase = async () => {
+//Use cached global connection if it exists, otherwise initialize
+const cached: CachedConnection = global.mongooseCache ?? { conn: null, promise: null };
+global.mongooseCache = cached;
+
+export const connectToDatabase = async (): Promise<typeof mongoose> => {
     const uri = process.env.CONNECTION_STRING;
-    if (!uri) throw new Error("CONNECTION_STRING environment variable not set");
 
-    //reuse existing connection
-    if (connection.isConnected) {
-        console.log("Using existing MongoDB database connection");
-        return connection.db!;
+    if (!uri) {
+        throw new Error("CONNECTION_STRING environment variable has not been set yet.")
     }
 
-    //establish new connection
-    const db = await mongoose.connect(uri);
-    connection.isConnected = db.connections[0].readyState;
-    connection.db = db;
-    console.log("Connected to MongoDB successfully");
+    //Already connected to MongoDB Database
+    if(cached.conn) {
+        console.log("Using existing MongoDB database connection.");
+        return cached.conn;
+    }
 
-    return db;
-}
+    //MongoDB connection is already in progress.
+    if(!cached.promise) {
+        cached.promise = mongoose.connect(uri, {
+            bufferCommands: false,
+        });
+    }
+
+    cached.conn = await cached.promise;
+    console.log("You have successfully connected to your MongoDB database.");
+
+    return cached.conn;
+};
