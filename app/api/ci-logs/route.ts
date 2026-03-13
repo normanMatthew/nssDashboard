@@ -11,8 +11,13 @@ import { requestRateLimiter } from "@/lib/api/infrastructure/requestRateLimiter"
 * Preferred order: connect to database -> rate limiter -> validation -> query.
 */
 export async function GET(req: Request) {
-    // connect to mongodb database
-    await connectToDatabase();
+    // connect to mongodb database. Try/catch implemented to prevent empty responses that cause frontend JSON parse errors.
+    try {
+        await connectToDatabase();
+    } catch (error) {
+        console.error("MongoDB connection failed:", error);
+        return NextResponse.json({ error: "Database connection failed."}, { status: 500 });
+    }
 
     // Rate Limiting
     const rate = await requestRateLimiter(req, {
