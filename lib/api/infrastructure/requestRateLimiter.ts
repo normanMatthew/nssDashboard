@@ -21,20 +21,21 @@ export async function requestRateLimiter(
 
     const { limit, windowMs } = { ...DEFAULT_OPTIONS, ...options };
 
-    const ip = 
+    const ip =
         req.headers.get("x-forwarded-for")?.split(",")[0] ??
         "unknown";
 
     const key = `ip:${ip}`
-    
+
     const now = Date.now();
     const windowStart = new Date(now - windowMs);
 
     // Insert request record
-    await RateLimit.create({
-        key,
-        createdAt: new Date()
-    }); 
+    await RateLimit.updateOne(
+        { key },
+        { $push: { createdAt: now } },
+        { upsert: true }
+    );
 
     // Count requests in window
     const count = await RateLimit.countDocuments({

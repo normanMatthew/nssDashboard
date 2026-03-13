@@ -72,8 +72,15 @@ export default function CiLogsDashBoardPage() {
             });
 
             const res = await fetch(`/api/ci-logs?${params.toString()}`);
-            
-            const data = await res.json();
+
+            let data;
+            //Preventing the frontend from crashing on 500 / empty responses.
+            try {
+                data = await res.json();
+            } catch (error) {
+                console.error("Polling Failed:", error)
+                return;
+            }
 
             if (!data.logs?.length) return;
 
