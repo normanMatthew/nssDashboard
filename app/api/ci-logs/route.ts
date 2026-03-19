@@ -128,6 +128,8 @@ export async function POST(req: Request) {
         response.headers.set("X-RateLimit-Limit", "10");
         response.headers.set("X-RateLimit-Remaining", String(rate.remaining));
         response.headers.set("X-RateLimit-Reset", String(rate.resetAt));
+
+        return response;
     } catch (error) {
         return NextResponse.json(
             { error: "Invalid JSON payload", detail: String(error) },

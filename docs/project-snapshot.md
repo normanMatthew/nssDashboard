@@ -174,33 +174,68 @@ Make the API resilient, safe, and un-abusable.
 
 ---
 
-## PHASE 3.9 — RATE LIMITING
+## PHASE 3.9 — RATE LIMITING & PRODUCTION STABILITY
 
 ### Objectives
 Prevent accidental or malicious overload.
 
-### Planned Work
-- Soft rate limiting
-- Burst tolerance
-- Per-IP or per-session limits
-- Friendly 429 handling
-- Frontend awareness of throttling
-
 ### Status
-🚀 Started
+✅ Complete
 
 ---
 
-## PHASE 3.10 — ETAG / CONDITIONAL FETCH OPTIMIZATION
+### ✅ Completed
+
+#### Rate Limiting (MongoDB-Based)
+- IP-based rate limiting
+- Configurable per endpoint (GET vs POST)
+- Sliding window approach using MongoDB
+- Concurrency-safe via `updateOne + upsert`
+- Prevents duplicate key errors
+- Returns proper `429` responses with retry metadata
+
+#### Infrastructure Refactor
+- Removed legacy middleware approach
+- Centralized limiter in `/lib/api/infrastructure/requestRateLimiter.ts`
+- Clean separation between route and infrastructure logic
+
+#### Database Connection Stability
+- Refactored `/lib/utils.ts`
+- Implemented global connection cache (`mongooseCache`)
+- Eliminated connection race conditions
+- Prevented buffering timeouts in production
+- Fully typed (removed all `any` usage)
+
+#### Production Fixes (Vercel)
+- Environment variables configured in **Vercel**
+- Removed `dotenv` (not needed in serverless)
+- Fixed production-only failures:
+  - 500 errors
+  - Empty JSON responses
+  - polling crashes
+
+#### Frontend Resilience
+- Polling now handles invalid/empty responses safely
+- Prevents UI crashes from failed API calls
+
+#### Performance Optimization
+- Added compound MongoDB index:
+
+---
+
+## PHASE 3.10 — ETAG / CONDITIONAL FETCH OPTIMIZATION / Cursor-based Pagination in /api/ci-logs
 
 ### Objectives
-Eliminate unnecessary payloads and renders.
+Eliminate unnecessary payloads and renders. Replace skip/limit.
 
 ### Planned Work
 - Backend ETag generation
 - Client `If-None-Match` headers
 - `304 Not Modified` responses
 - Skip frontend state updates entirely
+- Add TTL index to RateLimit collection
+  - Auto Delete old documents
+  - prevents unbounded growth
 
 ### Expected Result
 - Near-zero payload polling
@@ -208,7 +243,7 @@ Eliminate unnecessary payloads and renders.
 - Extremely scalable polling system
 
 ### Status
-⬜ Not started
+🟡 In Progress
 
 ---
 
@@ -262,5 +297,5 @@ Implement authentication / authorization.
 - ✅ Polling system stable, observable, and validated
 - ✅ UI truthfully reflects backend behavior
 - ✅ Security posture clean
-- ⏭ Currently Working On: **Phase 3.9 -- Rate Limiting**
+- ⏭ Currently Working On: **Phase 3.10 -- Etag Optimizations**
 
