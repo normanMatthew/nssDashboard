@@ -17,25 +17,36 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-
     //cleaner imports; makes all imports relative to the project root
-    "baseUrl": ".",
     //enable @ import aliasing
     "paths": {
-      "@/*": ["app/*"],
-      "@components/*": ["app/ui/*"], //ui components
-      "@/lib/*": ["lib/*"], // utilities and helpers
-      "@/styles/*": ["styles/*"],  //global styles or scss variables
-      "@root/*": ["*"]
+      "@/*": [
+        "./app/*"
+      ],
+      "@components/*": [
+        "./app/ui/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/styles/*": [
+        "./styles/*"
+      ],
+      "@root/*": [
+        "./*"
+      ]
     },
-
     "plugins": [
       {
         "name": "next"
       },
     ],
     //type safety improvement for react, ensuring vscode + eslint have full autocomplete and type support
-    "types": ["node", "react", "vitest/globals"],
+    "types": [
+      "node",
+      "react",
+      "vitest/globals"
+    ],
   },
   //lets typescript analyze my exisitng javascript files until migration
   "include": [
@@ -44,8 +55,10 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
-    "**/*.jsx"
-, "vitest.config.ts", "next.config.cjs"  ],
+    "**/*.jsx",
+    "vitest.config.ts",
+    "next.config.cjs"
+  ],
   "exclude": [
     "node_modules"
   ]

@@ -10,7 +10,7 @@ jobs:
   lint-test-build:
     runs-on: ubuntu-latest
     env:
-      CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+      CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
 
     steps:
       - name: Checkout repository
