@@ -2,8 +2,8 @@
 import React, { useRef } from "react";
 import { ICiWebHookLog } from "@/lib/models/CiWebhookLog";
 import { useCallback, useState, useEffect } from "react";
-import { Th } from "components/Table/Th";
-import { StatusTags } from "components/Table/StatusTags";
+import { Th } from "../../components/Table/Th";
+import { StatusTags } from "../../components/Table/StatusTags";
 import { usePolling } from "@/lib/hooks/usePolling";
 
 interface CiLogTableRow extends ICiWebHookLog {
